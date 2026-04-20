@@ -15,11 +15,10 @@ class AppSettings(BaseSettings):
 
 
 class DatabaseSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="DB_", env_file=".env", extra="ignore")
 
     host: str = "localhost"
     port: int = 5432
-    name: str
+    postgres_db: str
     user: str
     password: str
     url: str
@@ -35,6 +34,7 @@ class DatabaseSettings(BaseSettings):
         fields = {
             "url": {"env": "DATABASE_URL"},
             "url_sync": {"env": "DATABASE_URL_SYNC"},
+            "postgres_db": {"env": 'POSTGRES_DB'}
         }
 
 
