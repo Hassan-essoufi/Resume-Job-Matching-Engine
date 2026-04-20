@@ -6,14 +6,11 @@ services:
     image: postgres:15
     container_name: postgres_db
     restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: resume_matching
+    env_file: ../.env
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d mydb"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d resume_matching"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,17 +19,35 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   redis:
-      image: redis:7
-      container_name: redis_server
-      command: redis-server --appendonly yes
-      restart: always
-      ports:
-        - "6379:6379"
-
-      healthcheck:
-        test: ["CMD", "redis-cli", "ping"]
-        interval: 10s
-        timeout: 5s
-        retries: 3
-      volumes:
-        - redis_data:/data
+    image: redis:7
+    container_name: redis_server
+    restart: always
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - redis_data:/data
+  
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - qdrant_data:/qdrant/storage
+    
+volumes:
+  pgdata:
+  redis_data:
+  qdrant_data:
