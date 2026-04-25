@@ -34,4 +34,16 @@ class JobRepository():
     def __init__(self, session: AsyncSession):
         self.session = session
     
+    async def save(self, job: Job):
+        self.session.add(job)
+        await self.session.flush()
+        return job
+    
+    async def get_by_id(self, id: UUID):
+        result = await self.session.get(Job, id)
+        return result if result else None
+    
+    async def list_all(self):
+        result = await self.session.execute(select(Job))
+        return result.scalars().all()
     
