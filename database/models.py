@@ -11,7 +11,7 @@ class Resume(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, nullable=False)
     file_name = Column(String, nullable=False)
-    file_type = Column(Enum("pdf", "docx"), nullable=False)
+    file_type = Column(Enum("pdf", "docx", name="file_type_enum"), nullable=False)
     file_path = Column(String, nullable=False)
     raw_text = Column(TEXT, nullable=False)
     cleaned_text = Column(TEXT, nullable=False)
